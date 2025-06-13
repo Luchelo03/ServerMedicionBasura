@@ -1,0 +1,26 @@
+# ❌ ARCHIVOS SENSIBLES
+.env
+credentials.json
+
+# ❌ ARCHIVOS DE LA BASE DE DATOS LOCAL
+*.db
+*.sqlite
+
+# ❌ ENTORNO VIRTUAL DE PYTHON
+env/
+venv/
+ENV/
+.venv/
+
+# ❌ ARCHIVOS TEMPORALES
+__pycache__/
+*.py[cod]
+*.log
+
+# ❌ CONFIGURACIÓN DEL SISTEMA
+.DS_Store
+Thumbs.db
+
+# ❌ CONFIGURACIÓN DE IDE (opcional)
+.vscode/
+.idea/
