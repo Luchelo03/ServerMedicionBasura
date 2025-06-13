@@ -28,3 +28,11 @@ jobs:
     - name: 🧪 Verificar que Flask server no tiene errores
       run: |
         python -m py_compile app.py
+
+    - name: Ejecutar prueba de autenticación
+      run: |
+        python tests/test_auth.py
+
+    - name: Run Bandit
+      run: |
+        bandit -r .

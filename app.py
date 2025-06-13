@@ -6,16 +6,34 @@ import os
 
 app = Flask(__name__)
 
+# TOKEN SECRETO COMPARTIDO
+API_TOKEN = os.getenv("API_TOKEN")
+
 @app.route('/medicion', methods=['POST'])
 def recibir_medicion():
+    token = request.headers.get('Authorization')
+    if token != f"Bearer {API_TOKEN}":
+        return jsonify({"error": "No autorizado"}), 401
+
     data = request.json
     print("📥 Datos recibidos:", data)
 
     tacho_id = data.get('tacho_id')
-    if data is None or 'distancia' not in data:
-        return jsonify({'error': 'Datos inválidos'}), 400
-
     distancia = float(data['distancia'])
+
+     # Validar que tacho_id sea del tipo 'TCH###'
+    if not isinstance(tacho_id, str) or not tacho_id.startswith("TCH") or len(tacho_id) != 6:
+        return jsonify({"error": "Formato inválido de tacho_id"}), 400
+
+    # Validar que distancia sea un número positivo
+    try:
+        distancia = float(distancia)
+        if distancia < 0:
+            return jsonify({"error": "La distancia debe ser positiva"}), 400
+    except (TypeError, ValueError):
+        return jsonify({"error": "Distancia inválida"}), 400
+    
+    print("Validaciones pasadas ✅")
 
     altura_total = obtener_altura_tacho(tacho_id)
     print("altura: ", altura_total)
@@ -38,8 +56,9 @@ def recibir_medicion():
     return jsonify({
         'status': 'OK',
         'porcentaje': porcentaje,
-        'fecha_hora': fecha_hora
+        'fecha_hora': fecha_hora,
     })
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    debug_mode = os.getenv("FLASK_DEBUG", "False").lower() == "true"
+    app.run(host="0.0.0.0", port=5000, debug=debug_mode)
